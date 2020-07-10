@@ -428,7 +428,7 @@ def mapping(x,n,w,activation):
         f=1/(1+np.exp(-x))
         return f
 
-    def softmax(x): #En este caso x es un vector
+    def softmax(x): 
         e_x = np.exp(x - np.max(x))
         return e_x / e_x.sum()
 
@@ -451,7 +451,7 @@ def mapping(x,n,w,activation):
     for l in range(layers):
         nodes=np.size(w[l],1) 
         y[l+1]=np.zeros(nodes)
-        variables=np.size(w[l],0)-1         #NO PARECE QUE SEA NECESARIO!!!!!!
+        variables=np.size(w[l],0)-1
         for j in range(nodes):
             y[l+1][j]=w[l][0][j]+sum(w[l][1:][:,j]*z) #Hace la multiplicacion de peso por variable y suma 
         y[l+1]=activation_list[activation[l]](y[l+1]) #w[l][1:][:,j] automaticamente en formato fila para poder multiplicar por z
