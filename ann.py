@@ -1,5 +1,7 @@
 #Definimos la clase ANN (Artificial Neural Network)
 
+import numpy as np
+
 class ANN():
     
     def __init__(self, inputs, arch=None, activation=None, task=None):
@@ -17,7 +19,6 @@ class ANN():
                 raise Exception("Number of activation functions not consistent with number of layers")
             
             #Inicialización de los pesos de la red
-            import numpy as np
             
             layers=self.layers
             
@@ -63,7 +64,6 @@ class ANN():
     #Función para poder añadir más capas a la red
     def add_layer(self, neurons , function):
         
-        import numpy as np
         self.architecture.append(neurons)       #Añadimos la capa con las neuronas correspondientes
         self.activation.append(function)        #Añadimos la función de activación de la capa
         self.layers=len(self.architecture)-1
@@ -179,7 +179,7 @@ class ANN():
         
         #Para llevar a cabo el entrenamiento necesitamos tres funciones: mapping, backpropagation, y changeweights
                 
-        #Comienza el entrenamiento
+        #Comienzo del entrenamiento
         if batch_size==None:
             batch_size=epochs
 
@@ -188,20 +188,16 @@ class ANN():
         k=1 #Variable auxiliar para la barra de carga
         print('Training Neural Network ...')
         for m in range(epochs):
-            #n=0
             error=0
             for n in range(entries):
                 y_train=mapping(x_train,n,self.w,self.activation)
                 self.d=backpropagation(y_train,t_train,n,self.w,self.d,self.activation,self.cost_function)
                 
                 if n%batch_size==0:
-                    self.w,self.d,self.f,self.e,self.c=changeweight(self.w,self.d,self.f,self.e,self.c,
-                                             self.kappa,self.phi,self.theta,self.mu)
+                    self.w,self.d,self.f,self.e,self.c=changeweight(self.w,self.d,self.f,self.e,self.c,self.kappa,self.phi,self.theta,self.mu)
                 error=error+sum((y_train[-1]-t_train[n])**2)
-                #n=n+1
             error=error/(entries*len(y_train[-1]))
-            
-            #m=m+1
+
             #Print de algunas magnitudes de interés (error, época, y porcentaje de ejecución)
             if m%(epochs/10)==0:
                 string1=k*'#'
@@ -209,7 +205,6 @@ class ANN():
                 print('Error: %9.5f' %error,'%sEpoch: %5i' %('  ',m),'[%s%s]' %(string1,string2),'%i/%i' %(m,epochs))
                 k=k+1
         #Fin del entrenamiento
-        #====================================================================================================
     
     def predict(self, x_data, target=None):
         
@@ -264,8 +259,6 @@ class ANN():
 
     def evaluate(self,x_data,t_data,epochs,batch_size=None,metric=None,folds=None):
 
-        import numpy as np
-
         if batch_size==None:
             batch_size=epochs
 
@@ -309,20 +302,17 @@ class ANN():
             k=1 #Variable auxiliar para la barra de carga
             print('Training Neural Network ...')
             for m in range(epochs):
-                #n=0
                 error=0
                 for n in range(entries):
                     y_train=mapping(x_train,n,self.w,self.activation)
                     self.d=backpropagation(y_train,t_train,n,self.w,self.d,self.activation,self.cost_function)
                     
                     if n%batch_size==0:
-                        self.w,self.d,self.f,self.e,self.c=changeweight(self.w,self.d,self.f,self.e,self.c,
-                                                self.kappa,self.phi,self.theta,self.mu)
+                        self.w,self.d,self.f,self.e,self.c=changeweight(self.w,self.d,self.f,self.e,self.c,self.kappa,self.phi,self.theta,self.mu)
                     error=error+sum((y_train[-1]-t_train[n])**2)
-                    #n=n+1
+                    
                 error=error/(entries*len(y_train[-1]))
-                
-                #m=m+1
+
                 #Print de algunas magnitudes de interés (error, época, y porcentaje de ejecución)
                 if m%(epochs/10)==0:
                     string1=k*'#'
@@ -330,6 +320,7 @@ class ANN():
                     print('Error: %9.5f' %error,'%sEpoch: %5i' %('  ',m),'[%s%s]' %(string1,string2),'%i/%i' %(m,epochs))
                     k=k+1
             #Fin del entrenamiento
+            
             #Predicción con el test set
             print('Testing Neural Network...')
 
@@ -417,13 +408,11 @@ class ANN():
 
         print('Final Result:',metric,'=',performance)    
 
-#Subrutinas Utilizadas durante toda la ejecución del programa
-#==================================================================================
+#Subrutinas Utilizadas durante toda la Ejecución del Programa
+#========================================================================================================
 def mapping(x,n,w,activation): 
 
-    #Importación de paquetes necesarios
-    import numpy as np
-
+    #Definimos las funciones de activación
     def logistic(x):
         f=1/(1+np.exp(-x))
         return f
@@ -435,10 +424,10 @@ def mapping(x,n,w,activation):
     def reLU(x):
         return np.maximum(0,x)
 
-
+    #Diccionario con las funciones de activación disponibles
     activation_list = {'logistic': logistic,
-                        'softmax' : softmax,
-                        'reLU' : reLU}
+                       'softmax' : softmax,
+                       'reLU' : reLU}
 
     #Cálculo de las variables auxiliares
     layers=len(w) 
@@ -447,7 +436,6 @@ def mapping(x,n,w,activation):
     z=x[n]
 
     #Mapping
-
     for l in range(layers):
         nodes=np.size(w[l],1) 
         y[l+1]=np.zeros(nodes)
@@ -457,18 +445,11 @@ def mapping(x,n,w,activation):
         y[l+1]=activation_list[activation[l]](y[l+1]) #w[l][1:][:,j] automaticamente en formato fila para poder multiplicar por z
         z=np.copy(y[l+1])
 
-    #Fin de la subrutina
-    #========================================================================================================
     return y
 
 def backpropagation(y,t,n,w,deriv_total,activation,cost_function):
-    #Comienzo de la subrutina
-    #===================================================================================================
 
-    #Importamos los módulos necesarios
-    import numpy as np
-
-    #Definimos algunas magnitudes que utilizaremos
+    #Definimos algunas magnitudes auxiliares
     layers=len(w)
     delta=[0]*layers
     deriv=[0]*layers
@@ -498,8 +479,8 @@ def backpropagation(y,t,n,w,deriv_total,activation,cost_function):
 
     #Diccionario con las funciones de activación posibles
     derivative_list = {'logistic': d_logistic,
-                        'softmax' : d_softmax,
-                        'reLU' : d_reLU}
+                       'softmax' : d_softmax,
+                       'reLU' : d_reLU}
 
     #Definimos las derivadas de las funciones de error
     def MSE(y,t,n):
@@ -510,9 +491,8 @@ def backpropagation(y,t,n,w,deriv_total,activation,cost_function):
         return f
 
     #Diccionario con las derivadas del error dependiendo de la función utilizada para el mismo
-
     err_deriv_list = {'MSE' : MSE,
-                        'cross_entropy' : cross_entropy}
+                      'cross_entropy' : cross_entropy}
 
     #Calculamos las derivadas para la última capa
     nodes=np.size(w[-1],1)
@@ -555,15 +535,10 @@ def backpropagation(y,t,n,w,deriv_total,activation,cost_function):
 
         #Añadimos la derivada al total
         deriv_total[l]=deriv_total[l]+deriv[l]
-    #Fin de la subrutina
-    #==========================================================================================================
+
     return deriv_total
 
 def changeweight(w,d,f,e,c,kappa,phi,theta,mu):
-    #Subrutina cambio de pesos
-
-    #Importamos los paquetes necesarios
-    import numpy as np
 
     #Parámetros de utilidad
     layers=len(w)
@@ -586,4 +561,4 @@ def changeweight(w,d,f,e,c,kappa,phi,theta,mu):
                 d[l][i][j]=0
 
     return w,d,f,e,c  
-#===================================================================================
+#=========================================================================================
